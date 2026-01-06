@@ -1,0 +1,9 @@
+{
+  "name": "Gemini Omni-Assistant",
+  "description": "A comprehensive real-time voice assistant and AI hub featuring live audio scheduling, search-grounded chat, video analysis, and smart mapping.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

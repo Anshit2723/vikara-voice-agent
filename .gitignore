@@ -1,0 +1,19 @@
+# Dependencies
+node_modules
+server/node_modules
+
+# Environment variables
+.env
+.env.local
+server/.env
+
+# Secrets
+token.json
+server/token.json
+
+# Build outputs
+dist
+server/dist
+
+# System files
+.DS_Store
