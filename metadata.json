@@ -1,6 +1,6 @@
 {
-  "name": "Gemini Omni-Assistant",
-  "description": "A comprehensive real-time voice assistant and AI hub featuring live audio scheduling, search-grounded chat, video analysis, and smart mapping.",
+  "name": "Vikara | Voice Agent",
+  "description": "Voice-first AI agent for scheduling and multimodal assistance.",
   "requestFramePermissions": [
     "camera",
     "microphone",
