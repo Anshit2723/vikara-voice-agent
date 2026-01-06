@@ -431,7 +431,7 @@ Rules:
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 animate-in zoom-in-95 duration-500">
-      <div className="glass p-10 rounded-[3rem] border-slate-800 space-y-8 shadow-2xl relative overflow-hidden">
+      <div className="glass p-10 rounded-[3rem] border border-[color:var(--border)] space-y-8 shadow-2xl relative overflow-hidden">
         <div className="absolute top-0 right-0 p-8 opacity-5 pointer-events-none">
           <Calendar size={180} />
         </div>
@@ -442,15 +442,13 @@ Rules:
               <CheckCircle2 className="text-blue-400" size={24} />
             </div>
             <div>
-              <h2 className="text-2xl font-black italic tracking-tighter text-white">
+              <h2 className="text-2xl font-black italic tracking-tighter text-[var(--text)]">
                 VIKARA AGENT
               </h2>
-              <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
+              <div className="flex items-center gap-2 text-xs font-bold text-[var(--muted)] uppercase tracking-widest">
                 <span
                   className={`w-2 h-2 rounded-full ${
-                    isActive
-                      ? "bg-green-500 animate-pulse"
-                      : "bg-slate-600"
+                    isActive ? "bg-green-500 animate-pulse" : "bg-slate-400/60"
                   }`}
                 ></span>
                 {status}
@@ -458,14 +456,15 @@ Rules:
             </div>
           </div>
 
-          <div className="flex items-center gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-slate-800">
+          {/* Theme-aware mode switcher */}
+          <div className="flex items-center gap-2 bg-[var(--chip)] p-1.5 rounded-2xl border border-[var(--chip-border)]">
             <button
               onClick={() => setMode("sandbox")}
               disabled={isActive}
               className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                 mode === "sandbox"
-                  ? "bg-blue-600 text-white shadow-lg"
-                  : "text-slate-500 hover:text-white"
+                  ? "bg-blue-600 text-white shadow-lg shadow-blue-600/25"
+                  : "text-[var(--chip-text)] hover:bg-black/10 hover:text-[var(--text)]"
               }`}
             >
               Sandbox
@@ -475,8 +474,8 @@ Rules:
               disabled={isActive}
               className={`px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                 mode === "real"
-                  ? "bg-emerald-600 text-white shadow-lg"
-                  : "text-slate-500 hover:text-white"
+                  ? "bg-emerald-600 text-white shadow-lg shadow-emerald-600/25"
+                  : "text-[var(--chip-text)] hover:bg-black/10 hover:text-[var(--text)]"
               }`}
             >
               Real Mode
@@ -500,29 +499,30 @@ Rules:
               className={`relative w-40 h-40 rounded-full flex items-center justify-center border-4 transition-all duration-500 ${
                 isActive
                   ? "bg-red-500 border-red-400"
-                  : "bg-slate-900 border-slate-700 hover:border-blue-500"
+                  : "bg-black/20 border-[color:var(--border)] hover:border-blue-500/60"
               }`}
             >
               {isActive ? (
                 <Activity size={48} className="text-white animate-pulse" />
               ) : (
-                <Mic size={48} className="text-slate-400" />
+                <Mic size={48} className="text-[var(--muted)]" />
               )}
             </div>
           </div>
 
-          <p className="mt-8 text-sm font-bold text-slate-500 uppercase tracking-widest">
+          <p className="mt-8 text-sm font-bold text-[var(--muted)] uppercase tracking-widest">
             {isActive
               ? `Input Level: ${(audioLevel * 100).toFixed(0)}%`
               : "Tap to speak"}
           </p>
         </div>
 
+        {/* Theme-aware Real Mode panel */}
         {mode === "real" && (
-          <div className="bg-slate-900/40 rounded-2xl p-6 border border-slate-800 flex items-center justify-between gap-4">
+          <div className="rounded-2xl p-6 border flex items-center justify-between gap-4 bg-[color:var(--panel)] border-[color:var(--panel-border)]">
             <div className="flex items-center gap-3">
-              <Info size={18} className="text-slate-500" />
-              <p className="text-xs text-slate-400 font-medium">
+              <Info size={18} className="text-[var(--muted)]" />
+              <p className="text-xs text-[var(--muted)] font-medium">
                 To use Real Mode, you must grant calendar access.
               </p>
             </div>
@@ -530,7 +530,7 @@ Rules:
             {organizerConnected ? (
               <button
                 onClick={signOutOrganizer}
-                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-400 rounded-lg text-xs font-bold uppercase tracking-wider border border-red-500/20"
+                className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 rounded-lg text-xs font-bold uppercase tracking-wider border border-red-500/20 hover:bg-red-500/15 transition-colors"
               >
                 <LogOut size={14} /> Disconnect
               </button>
@@ -538,10 +538,9 @@ Rules:
               <button
                 onClick={connectOrganizerCalendar}
                 disabled={isConnecting}
-                className="flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg text-xs font-bold uppercase tracking-wider hover:scale-105 transition-all"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-blue-500 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Play size={14} />{" "}
-                {isConnecting ? "Connecting..." : "Connect Google"}
+                <Play size={14} /> {isConnecting ? "Connecting..." : "Connect Google"}
               </button>
             )}
           </div>
