@@ -7,7 +7,7 @@ import { BackendCalendar } from '../services/backendCalendar';
 
 const ChatBot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', text: "Welcome to Gemini Omni Chat. I can search the web and manage your Google Calendar via the secure backend. How can I help?" }
+    { role: 'model', text: "Welcome to Vikara AI Chat. I can search the web and manage your Google Calendar via the secure backend. How can I help?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -84,7 +84,7 @@ const ChatBot: React.FC = () => {
         contents: currentHistory,
         config: { 
           tools,
-          systemInstruction: `You are an omni-assistant. 
+          systemInstruction: `You are Vikara AI Assistant. 
           Current Time: ${new Date().toISOString()}
           If the user asks about schedule, call 'list_events'.
           If the user wants to book a meeting, ask for the attendee email if not provided.`
