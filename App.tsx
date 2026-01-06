@@ -147,8 +147,8 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="flex items-center gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-slate-800">
+        {/* Tabs (theme-aware) */}
+        <div className="flex items-center gap-2 bg-[var(--chip)] p-1.5 rounded-2xl border border-[var(--chip-border)]">
           {tabs.map(tab => (
             <button
               key={tab.id}
@@ -156,7 +156,7 @@ const App: React.FC = () => {
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all font-bold text-sm ${
                 activeTab === tab.id
                   ? 'bg-blue-600 text-white shadow-xl shadow-blue-900/40'
-                  : 'text-slate-500 hover:bg-slate-800 hover:text-slate-200'
+                  : 'text-[var(--chip-text)] hover:bg-black/10 hover:text-[var(--text)]'
               }`}
             >
               {tab.icon}
