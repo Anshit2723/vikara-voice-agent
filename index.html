@@ -36,9 +36,17 @@
 
         --glowA: rgba(99, 102, 241, 0.22);
         --glowB: rgba(139, 92, 246, 0.18);
+
+        /* UI control surfaces (tabs / header pills / chips) */
+        --panel: rgba(15, 23, 42, 0.55);
+        --panel-border: rgba(255, 255, 255, 0.10);
+
+        --chip: rgba(2, 6, 23, 0.35);
+        --chip-border: rgba(255, 255, 255, 0.10);
+        --chip-text: rgba(234, 240, 255, 0.68);
       }
 
-      /* Light theme overrides */
+      /* Light theme overrides (Apple-ish soft gray, not pure white) */
       html[data-theme="light"] {
         --bg0: #f6f7fb;
         --bg1: #eef1f8;
@@ -55,6 +63,14 @@
 
         --glowA: rgba(99, 102, 241, 0.18);
         --glowB: rgba(139, 92, 246, 0.14);
+
+        /* UI control surfaces (tabs / header pills / chips) */
+        --panel: rgba(255, 255, 255, 0.72);
+        --panel-border: rgba(15, 23, 42, 0.12);
+
+        --chip: rgba(255, 255, 255, 0.50);
+        --chip-border: rgba(15, 23, 42, 0.10);
+        --chip-text: rgba(11, 18, 32, 0.62);
       }
 
       body {
@@ -76,29 +92,29 @@
         border-radius: var(--radius-xl);
       }
 
-      /* Optional: a slightly stronger surface for headers */
+      /* Slightly stronger surface for headers */
       .glass-strong {
-        background: linear-gradient(180deg, rgba(0,0,0,0.10), rgba(0,0,0,0.02)), linear-gradient(180deg, var(--surface), var(--surface2));
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.10), rgba(0, 0, 0, 0.02)),
+          linear-gradient(180deg, var(--surface), var(--surface2));
       }
       html[data-theme="light"] .glass-strong {
-        background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.35));
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.50));
       }
 
       /* Better scrollbar */
       .custom-scrollbar::-webkit-scrollbar { width: 8px; }
       .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
       .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(255,255,255,0.10);
+        background: rgba(255, 255, 255, 0.10);
         border-radius: 999px;
         border: 2px solid transparent;
         background-clip: content-box;
       }
       html[data-theme="light"] .custom-scrollbar::-webkit-scrollbar-thumb {
-        background: rgba(15,23,42,0.12);
+        background: rgba(15, 23, 42, 0.12);
         border: 2px solid transparent;
         background-clip: content-box;
       }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover { opacity: 0.9; }
 
       /* Minimal “brand mark” background texture */
       .vikara-noise {
@@ -119,18 +135,16 @@
     </style>
 
     <script>
-      // Load theme before React paints to avoid flash
+      // Theme bootstrap: ALWAYS default to dark (ignore system).
+      // If user previously chose a theme, respect that.
       (function () {
         try {
-          const saved = localStorage.getItem("vikara-theme");
-          const theme =
-            saved ||
-            (window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: light)").matches
-              ? "light"
-              : "dark");
+          var saved = localStorage.getItem("vikara-theme");
+          var theme = saved || "dark";
           document.documentElement.dataset.theme = theme;
-        } catch (e) {}
+        } catch (e) {
+          document.documentElement.dataset.theme = "dark";
+        }
       })();
     </script>
   </head>
