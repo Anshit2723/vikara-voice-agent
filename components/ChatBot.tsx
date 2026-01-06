@@ -172,7 +172,7 @@ const ChatBot: React.FC = () => {
             <Bot className="text-white" size={20} />
           </div>
           <div>
-            <span className="font-black text-white block text-sm uppercase tracking-tighter">Omni Sync Chat</span>
+            <span className="font-black text-white block text-sm uppercase tracking-tighter">Vikara Ai Agent Chat</span>
             <span className="text-[10px] text-blue-500 font-black uppercase tracking-[0.2em]">Backend Linked</span>
           </div>
         </div>
