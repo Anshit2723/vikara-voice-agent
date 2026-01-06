@@ -102,7 +102,7 @@ const App: React.FC = () => {
             <BrainCircuit className="text-white w-6 h-6" />
           </div>
           <h1 className="text-xl font-black bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent hidden sm:block italic uppercase tracking-tighter">
-            Omni 2.5
+            Vikara Ai
           </h1>
         </div>
         <div className="flex items-center gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-slate-800">
