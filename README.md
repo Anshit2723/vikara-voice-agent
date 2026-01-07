@@ -182,4 +182,4 @@ Backend runs on **Render Free Tier** and may spin down.
 
 ## 📌 Closing Note
 
-Vikara is a **systems-level demo**, showcasing how **voice, multimodal models, and deterministic APIs** can work together reliably.
+Vikara AI Voice Agent showcases how **voice, multimodal models, and deterministic APIs** can work together reliably.
