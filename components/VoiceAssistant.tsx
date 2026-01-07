@@ -171,6 +171,7 @@ const VoiceAssistant: React.FC<Props> = ({ onRefresh }) => {
                Example: 2026-11-26T17:00:00${offsetIso}.
             2. Be concise and professional.
             3. Use the 'googleSearch' tool if the user asks about dates, holidays, or facts.
+            4.STAY FOCUSED: Do not engage in small talk, philosophy, or off-topic subjects. If the user strays, politely steer them back to their schedule.
           `,
           tools: [
             { googleSearch: {} },
