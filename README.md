@@ -135,7 +135,7 @@ npm run dev
 
 ## 🧪 Advanced Testing Scenarios
 
-We recommend testing these specific workflows to observe the agent's reasoning capabilities:
+I recommend testing these specific workflows to observe the agent's reasoning capabilities:
 
 ### 1. Temporal Grounding (Real-World Knowledge)
 *Demonstrates the agent's ability to use Google Search to resolve cultural references before scheduling.*
