@@ -3,7 +3,6 @@ import { AppTab } from "./types";
 import VoiceAssistant from "./components/VoiceAssistant";
 import ChatBot from "./components/ChatBot";
 import VideoAnalyzer from "./components/VideoAnalyzer";
-import { Toaster } from "sonner";
 import {
   Calendar,
   MessageSquare,
@@ -430,7 +429,6 @@ setSuggestions(lines.map((l) => l.replace(/^[*-]\s*/, "")));
       </main>
 
      <Footer />
-      <Toaster position="top-center" richColors />
     </div>
   );
 };
