@@ -1,0 +1,9 @@
+{
+  "name": "Vikara | Voice Agent",
+  "description": "Voice-first AI agent for scheduling and multimodal assistance.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}
