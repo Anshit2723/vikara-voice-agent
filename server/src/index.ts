@@ -45,16 +45,6 @@ if (missing.length) {
   process.exit(1);
 }
 
-console.log("✅ Environment validation passed");
-console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-console.log("📍 Configuration:");
-console.log(`   Environment: ${NODE_ENV}`);
-console.log(`   Frontend Origin: ${FRONTEND_ORIGIN}`);
-console.log(`   OAuth Redirect: ${GOOGLE_REDIRECT_URI}`);
-console.log(`   Calendar ID: ${GOOGLE_CALENDAR_ID}`);
-console.log(`   Timezone: ${DEFAULT_TIMEZONE}`);
-console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-
 // ============================================================================
 // CORS CONFIGURATION (Production Only)
 // ============================================================================
@@ -63,6 +53,8 @@ const allowedOrigins: (string | RegExp)[] = [
   FRONTEND_ORIGIN,
   // Allow preview deployments (*.vercel.app)
   /^https:\/\/.*\.vercel\.app$/,
+  // Allow localhost for safer debugging
+  "http://localhost:3000" 
 ];
 
 const corsOptions: CorsOptions = {
@@ -87,7 +79,6 @@ app.use((req, res, next) => {
 
 // ============================================================================
 // SESSION STORAGE (In-Memory)
-// NOTE: For production scaling, upgrade to Redis or database
 // ============================================================================
 
 interface SessionData {
@@ -249,7 +240,6 @@ app.get("/api/auth/callback", async (req, res) => {
 // Check auth status
 app.get("/api/auth/status", (req, res) => {
   try {
-    // FIX: Strict type handling for TS2345
     const sessionIdRaw = req.query.session;
     const sessionId = typeof sessionIdRaw === "string" ? sessionIdRaw : "";
 
@@ -274,7 +264,6 @@ app.get("/api/auth/status", (req, res) => {
 // Logout
 app.post("/api/auth/logout", (req, res) => {
   try {
-    // FIX: Strict type handling for TS2345
     const sessionIdRaw = req.query.session;
     const sessionId = typeof sessionIdRaw === "string" ? sessionIdRaw : "";
 
@@ -304,22 +293,31 @@ app.get("/api/calendar/freebusy", async (req, res) => {
       });
     }
 
-    console.log(`[Calendar] Checking availability: ${timeMin} - ${timeMax}`);
-    
-    // Check if we have a session token to use
+    // Determine Auth Client
     const sessionIdRaw = req.query.session;
     const sessionId = typeof sessionIdRaw === "string" ? sessionIdRaw : "";
-    let auth = oauth2Client;
+    let auth: any = oauth2Client;
+    let isConnected = false;
 
     if (sessionId) {
         const session = getSession(sessionId);
         if (session) {
             const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
             client.setCredentials({ access_token: session.accessToken, refresh_token: session.refreshToken });
-            auth = client as any;
+            auth = client;
+            isConnected = true;
         }
+    } else if (oauth2Client.credentials?.access_token) {
+        isConnected = true;
     }
 
+    // FIX: If not connected, return safe empty response instead of crashing
+    if (!isConnected) {
+        console.log("[Calendar] No credentials available for freebusy");
+        return res.json({ isFree: false, busy: [], note: "Not authenticated" });
+    }
+
+    console.log(`[Calendar] Checking availability: ${timeMin} - ${timeMax}`);
     const calendar = google.calendar({ version: "v3", auth });
 
     const response = await calendar.freebusy.query({
@@ -363,7 +361,6 @@ app.post("/api/calendar/schedule", async (req, res) => {
       description,
     } = req.body;
 
-    // Validate required fields
     if (!title || !attendeeEmail || !startIso || !endIso) {
       return res.status(400).json({
         ok: false,
@@ -372,18 +369,27 @@ app.post("/api/calendar/schedule", async (req, res) => {
       });
     }
 
-    // Check if we have a session token to use
+    // Determine Auth Client
     const sessionIdRaw = req.query.session;
     const sessionId = typeof sessionIdRaw === "string" ? sessionIdRaw : "";
-    let auth = oauth2Client;
+    let auth: any = oauth2Client;
+    let isConnected = false;
 
     if (sessionId) {
         const session = getSession(sessionId);
         if (session) {
             const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
             client.setCredentials({ access_token: session.accessToken, refresh_token: session.refreshToken });
-            auth = client as any;
+            auth = client;
+            isConnected = true;
         }
+    } else if (oauth2Client.credentials?.access_token) {
+        isConnected = true;
+    }
+
+    // FIX: If not connected, fail gracefully
+    if (!isConnected) {
+        return res.status(401).json({ ok: false, error: "Unauthorized: Please connect Google Calendar first." });
     }
 
     console.log(`[Calendar] Scheduling: "${title}" with ${attendeeEmail}`);
@@ -449,18 +455,28 @@ app.get("/api/calendar/events", async (req, res) => {
       });
     }
 
-    // Check if we have a session token to use
+    // Determine Auth Client
     const sessionIdRaw = req.query.session;
     const sessionId = typeof sessionIdRaw === "string" ? sessionIdRaw : "";
-    let auth = oauth2Client;
+    let auth: any = oauth2Client;
+    let isConnected = false;
 
     if (sessionId) {
         const session = getSession(sessionId);
         if (session) {
             const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI);
             client.setCredentials({ access_token: session.accessToken, refresh_token: session.refreshToken });
-            auth = client as any;
+            auth = client;
+            isConnected = true;
         }
+    } else if (oauth2Client.credentials?.access_token) {
+        isConnected = true;
+    }
+
+    // FIX: If not connected, return empty list instead of crashing
+    if (!isConnected) {
+        console.log("[Calendar] No auth token available, returning empty list");
+        return res.json({ events: [], timeMin, timeMax });
     }
 
     console.log(`[Calendar] Listing events: ${timeMin} - ${timeMax}`);
@@ -484,10 +500,8 @@ app.get("/api/calendar/events", async (req, res) => {
     });
   } catch (error: any) {
     console.error("❌ Error listing events:", error.message);
-    res.status(500).json({
-      error: error.message || "Failed to list events",
-      details: error.errors?.[0]?.message,
-    });
+    // Fallback: don't crash the frontend, just return empty
+    res.json({ events: [], error: error.message });
   }
 });
 
@@ -523,26 +537,7 @@ app.use((req, res) => {
 // ============================================================================
 
 const server = app.listen(PORT, () => {
-  console.log("\n");
-  console.log("╔════════════════════════════════════════════════════════════╗");
-  console.log("║                                                            ║");
-  console.log("║           ✅ VIKARA BACKEND - PRODUCTION READY            ║");
-  console.log("║                                                            ║");
-  console.log("╚════════════════════════════════════════════════════════════╝");
   console.log(`\n🚀 Server running on port ${PORT}`);
-  console.log(`🌍 Environment: ${NODE_ENV}`);
-  console.log(`📍 Frontend: ${FRONTEND_ORIGIN}`);
-  console.log(`🔐 OAuth Redirect: ${GOOGLE_REDIRECT_URI}`);
-  console.log("\n📚 Available endpoints:");
-  console.log("   GET  /health                        - Server health");
-  console.log("   GET  /api/auth/url                  - Get OAuth URL");
-  console.log("   GET  /api/auth/callback             - OAuth callback");
-  console.log("   GET  /api/auth/status               - Check auth status");
-  console.log("   POST /api/auth/logout               - Logout");
-  console.log("   GET  /api/calendar/freebusy         - Check availability");
-  console.log("   POST /api/calendar/schedule         - Schedule meeting");
-  console.log("   GET  /api/calendar/events           - List events");
-  console.log("\n");
 });
 
 // Graceful shutdown
