@@ -99,6 +99,9 @@ Create a `.env` file:
 GOOGLE_CLIENT_ID=your_client_id
 GOOGLE_CLIENT_SECRET=your_client_secret
 GOOGLE_REDIRECT_URI=http://localhost:3000/auth/callback
+# App Configuration
+PORT=8000
+FRONTEND_ORIGIN=http://localhost:3000
 ```
 
 Start backend:
@@ -118,6 +121,8 @@ Create `.env.local`:
 
 ```env
 VITE_GEMINI_API_KEY=your_gemini_api_key
+# Backend URL (Local)
+VITE_BACKEND_URL=http://localhost:8000
 ```
 
 Run frontend:
@@ -128,17 +133,42 @@ npm run dev
 
 ---
 
-## 🧪 Example Testing Scenarios
+## 🧪 Advanced Testing Scenarios
 
-- **“Am I free tomorrow afternoon?”**  
-  → Queries Google Calendar freebusy API.
+We recommend testing these specific workflows to observe the agent's reasoning capabilities:
 
-- **“Book a meeting with Alex at 3 PM”**  
-  → Collects title, time, and participant email.
+### 1. Temporal Grounding (Real-World Knowledge)
+*Demonstrates the agent's ability to use Google Search to resolve cultural references before scheduling.*
+- **User:** "Schedule a planning session on **Republic Day** at 10 AM."
+- **Agent Behavior:** 
+  1. Calls `googleSearch` to identify the date of Republic Day (Jan 26th) for the current year.
+  2. Converts to ISO-8601 format.
+  3. Checks availability and creates the event.
 
-- **“Change that to 4 PM”**  
-  → Context-aware modification of the original intent.
+### 2. Contextual Memory & Modification
+*Demonstrates the ability to retain intent parameters across conversation turns.*
+- **User:** "Book a strategy sync with Alex for 3 PM."
+- **Agent:** "Okay, I have a strategy sync with Alex at 3 PM. Shall I confirm?"
+- **User:** "**Actually, move that to 4 PM** and change the title to 'Deployment Review'."
+- **Agent Behavior:** 
+  1. Retains the email (Alex) from the first turn.
+  2. Overwrites the Time and Title.
+  3. Confirms the *updated* composite request before calling the API.
 
+### 3. Conflict Resolution & Negotiation
+*Demonstrates deterministic logic and state management.*
+- **User:** "Book a sync for today at [Time you are busy]."
+- **Agent Behavior:**
+  1. Queries backend `freebusy` endpoint.
+  2. Detects the conflict.
+  3. **Rejects the request** and proposes the next available slot immediately following the conflict.
+
+### 4. Global Timezone Normalization
+*Demonstrates ISO-8601 handling.*
+- **User:** "Book a call for 9 AM **London time** tomorrow."
+- **Agent Behavior:**
+  1. Calculates the offset difference between the User's browser locale and London (GMT/BST).
+  2. Sends the correct converted ISO timestamp to the backend (e.g., booking it at 2:30 PM IST).
 ---
 
 ## ⚠️ Demo Note: Cold Start Latency
