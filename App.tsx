@@ -429,8 +429,8 @@ setSuggestions(lines.map((l) => l.replace(/^[*-]\s*/, "")));
         </div>
       </main>
 
-      <Footer />
-           <Toaster position="top-center" richColors />
+     <Footer />
+      <Toaster position="top-center" richColors />
     </div>
   );
 };
